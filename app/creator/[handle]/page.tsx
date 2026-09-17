@@ -9,10 +9,12 @@ export function generateStaticParams() {
   return SAMPLE_CREATORS.map((c) => ({ handle: c.handle }));
 }
 
-export default async function CreatorPage(
-  props: PageProps<"/creator/[handle]">
-) {
-  const { handle } = await props.params;
+export default async function CreatorPage({
+  params,
+}: {
+  params: Promise<{ handle: string }>;
+}) {
+  const { handle } = await params;
   const creator = SAMPLE_CREATORS.find((c) => c.handle === handle);
   if (!creator) notFound();
 

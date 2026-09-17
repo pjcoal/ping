@@ -14,7 +14,11 @@ export const metadata: Metadata = {
 // next/font/google: it renders identically without depending on Google
 // Fonts being reachable at build time, which varies across CI/hosting
 // setups. Swap in a next/font/local brand typeface whenever you have one.
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-[#0B0E11] text-[#F5F3EF]">
