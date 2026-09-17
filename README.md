@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PING
 
-## Getting Started
+**Ping creators every trade fee. Automatically.**
 
-First, run the development server:
+PING is an original rebrand of the "launch a coin for a creator, split
+every trade fee to them automatically on-chain" concept — the same general
+mechanic as sites like sendmoney.cash, built independently here under a
+different name, different visual identity, and a different fee split
+(88% creator / 7% platform / 5% buyback, vs. their published 90/5/5), so it
+isn't a copy of their code, copy, or brand — just the same category of
+product, targeting **Robinhood Chain** (the way pons —
+https://www.ponsfamily.com/launchpad — lists launches) instead of Solana.
+
+This repo has two parts:
+
+- **`/` (this Next.js app)** — the website: landing page, creator explore
+  grid, creator profiles with a claim flow, and a "launch a coin" form.
+  Real wallet connect for Robinhood Chain (an Ethereum L2 built on the
+  Arbitrum Orbit stack) is wired up via `wagmi`, defaulting to
+  **Robinhood Chain testnet**.
+- **`/contracts`** — the on-chain piece: a Solidity contract
+  (`FeeRouter.sol`) that actually holds and splits fees. **Read
+  `contracts/README.md` before doing anything with real funds** — it
+  explains what's genuinely implemented, what's still missing (Uniswap v4
+  pool integration, decentralized creator verification), and what needs to
+  happen (audit, legal review) before this should touch mainnet.
+
+## What's real vs. sample data
+
+- Wallet connect (via `wagmi`, tested with MetaMask-style injected wallets
+  and Coinbase Wallet) and the on-chain contract are real, working code.
+  The claim transaction builder calls the real `claim(handle)` function on
+  the deployed contract once its address is configured.
+- The creators, market caps, holder counts, and activity feed shown on
+  `/`, `/explore`, and `/creator/[handle]` are **sample data** (see
+  `lib/mock-data.ts`) — clearly labeled in the UI as "preview only."
+  Nothing has launched yet.
+- The "Launch a coin" form (`/launch`) collects the info and shows the bio
+  verification code, but stops short of submitting an on-chain
+  `initializeVault` transaction — that's the next piece to wire up once
+  the contract is deployed (see `contracts/README.md`).
+
+## Running locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Opens on `http://localhost:3000`. No environment variables are required to
+browse the preview; wallet connect works out of the box against Robinhood
+Chain testnet (chain ID `46630`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To point the claim flow at a real deployed contract once you've followed
+`contracts/README.md`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+NEXT_PUBLIC_FEE_ROUTER_CONTRACT_ADDRESS=<your deployed contract address> \
+NEXT_PUBLIC_ROBINHOOD_NETWORK=testnet \
+npm run dev
+```
 
-## Learn More
+## Publishing to your domain
 
-To learn more about Next.js, take a look at the following resources:
+This is a standard Next.js app — build it and deploy the output however
+you deploy static/Node sites today (Vercel, your own server behind a
+reverse proxy at `/launchpad`, etc.):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+npm start   # or `next export`-style static hosting, depending on your setup
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If you're hosting it at a sub-path like `/launchpad` rather than the
+domain root, set `basePath` in `next.config.ts` accordingly before
+building.
 
-## Deploy on Vercel
+## Before you tell anyone this is live
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Read `contracts/README.md`'s "Before this touches real user funds" section.
+Short version: get a professional audit of the on-chain contract, get legal
+advice on revenue-sharing tokens in your jurisdiction(s), and replace the
+single-admin creator-verification step with something stronger, before any
+real money moves through this.

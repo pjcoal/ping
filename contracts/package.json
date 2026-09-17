@@ -1,0 +1,16 @@
+{
+  "name": "ping-fee-router-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PING's FeeRouter Solidity contract, targeting Robinhood Chain.",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test"
+  },
+  "devDependencies": {
+    "hardhat": "^2.22.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "typescript": "^5",
+    "ts-node": "^10"
+  }
+}

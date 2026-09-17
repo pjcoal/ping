@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# contracts (Hardhat)
+contracts/node_modules/
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/

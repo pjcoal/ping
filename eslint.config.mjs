@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The Solidity contract is a separate Hardhat/TS workspace with its
+    // own dependency set (hardhat, chai, mocha types) that isn't installed
+    // at the app root — see contracts/README.md.
+    "contracts/**",
   ]),
 ]);
 
